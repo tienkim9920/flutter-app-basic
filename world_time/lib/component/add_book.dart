@@ -30,6 +30,9 @@ class AddBook extends StatelessWidget {
             child: SizedBox(
               height: 35,
               child: ElevatedButton.icon(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Color.fromRGBO(13, 71, 161, 1))),
                 onPressed: () => onAddBook(quoteInput.text),
                 icon: Icon(Icons.add),
                 label: Text('Add'),

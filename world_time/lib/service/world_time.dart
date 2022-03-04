@@ -3,7 +3,15 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 
 class ServiceWorldTime {
-  Future<dynamic> getTime(String url) async {
+  late String location; // location name for UI
+  late String time; // the time in that location
+  late String flag; // url to an asset flag icon
+  late String url; // location url for api endpoint
+  late bool isDaytime; // true or false if daytime or not
+
+  ServiceWorldTime(this.location, this.flag, this.url);
+
+  Future<void> getTime() async {
     try {
       // make the request
       Response response =
@@ -19,9 +27,10 @@ class ServiceWorldTime {
       now = now.add(Duration(hours: int.parse(offset)));
 
       // set the time property
-      return DateFormat.jm().format(now);
+      isDaytime = now.hour > 6 && now.hour < 20 ? true : false;
+      time = DateFormat.jm().format(now);
     } catch (e) {
-      return 'could not get time';
+      time = 'could not get time';
     }
   }
 }

@@ -32,6 +32,9 @@ class QuoteCard extends StatelessWidget {
               ),
               SizedBox(height: 8.0),
               ElevatedButton.icon(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          Color.fromRGBO(13, 71, 161, 1))),
                   onPressed: () => onDelete(quote.id),
                   icon: Icon(Icons.delete),
                   label: Text('Delete'))
