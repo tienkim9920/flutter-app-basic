@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:world_time/service/world_time.dart';
 
 class Loading extends StatefulWidget {
   const Loading({Key? key}) : super(key: key);
@@ -8,6 +11,18 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
+  void gotoScreenBook() {
+    Navigator.pushNamed(context, '/book');
+  }
+
+  void gotoScreenHome() async {
+    ServiceWorldTime serviceWorldTime = new ServiceWorldTime();
+
+    var time = await serviceWorldTime.getTime('Asia/Ho_Chi_Minh');
+
+    // Navigator.pushNamed(context, '/home');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,11 +34,11 @@ class _LoadingState extends State<Loading> {
                 foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
               ),
-              onPressed: () => {Navigator.pushNamed(context, '/home')},
+              onPressed: () => gotoScreenHome(),
               icon: Icon(Icons.edit_location),
               label: Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Text("Redirect Home"),
+                child: Text("World Time"),
               ),
             ),
             SizedBox(
@@ -34,11 +49,11 @@ class _LoadingState extends State<Loading> {
                 foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
               ),
-              onPressed: () => {Navigator.pushNamed(context, '/book')},
+              onPressed: () => gotoScreenBook(),
               icon: Icon(Icons.edit_location),
               label: Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Text("Redirect Book"),
+                child: Text("Manager Book"),
               ),
             ),
           ],

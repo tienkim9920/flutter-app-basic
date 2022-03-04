@@ -16,6 +16,8 @@ class Book extends StatefulWidget {
 class _BookState extends State<Book> {
   TextEditingController quoteInput = TextEditingController();
 
+  final int number = 0;
+
   List<Quote> quotes = [
     Quote('1', 'Oscar Wilde', 'Be yourself; everyone else is already taken'),
     Quote('2', 'Oscar Wilde', 'I have nothing to declare except my genius'),
