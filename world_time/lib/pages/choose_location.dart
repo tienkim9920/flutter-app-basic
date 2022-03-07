@@ -18,6 +18,7 @@ class _ChooseLocationState extends State<ChooseLocation> {
     ServiceWorldTime('Japan', 'tokyo.png', 'Asia/Tokyo'),
     ServiceWorldTime('Chicago', 'chicago.png', 'America/Chicago'),
     ServiceWorldTime('Costa Rica', 'costa_rica.png', 'America/Costa_Rica'),
+    ServiceWorldTime('Vladivostok', 'vladivostok.png', 'Asia/Vladivostok'),
   ];
 
   void getUpdateTime(index) async {

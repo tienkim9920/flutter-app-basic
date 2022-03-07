@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:world_time/models/time.dart';
 import 'package:world_time/service/world_time.dart';
 
 class Home extends StatefulWidget {
@@ -16,10 +17,10 @@ class _HomeState extends State<Home> {
         await Navigator.pushNamed(context, '/location') as ServiceWorldTime;
     setState(() => {
           data = {
-            'time': result.time,
             'location': result.location,
-            'isDaytime': result.isDaytime,
-            'flag': result.flag
+            'time': result.time,
+            'flag': result.flag,
+            'isDaytime': result.isDaytime
           }
         });
   }
@@ -45,8 +46,8 @@ class _HomeState extends State<Home> {
           decoration: BoxDecoration(
               image: DecorationImage(
                   image: AssetImage('assets/$bgImage'), fit: BoxFit.cover)),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 120.0, 0, 0),
+          child: Container(
+            margin: const EdgeInsets.only(top: 200),
             child: Column(children: [
               ElevatedButton.icon(
                   style: ButtonStyle(
