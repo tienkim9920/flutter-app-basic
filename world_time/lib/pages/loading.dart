@@ -1,6 +1,4 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:world_time/models/time.dart';
 import 'package:world_time/service/world_time.dart';
 
 class Loading extends StatefulWidget {
@@ -17,13 +15,17 @@ class _LoadingState extends State<Loading> {
 
   void gotoScreenHome() async {
     ServiceWorldTime serviceWorldTime =
-        new ServiceWorldTime('Ho Chi Minh', 'germany.png', 'Asia/Ho_Chi_Minh');
+        ServiceWorldTime('Ho Chi Minh', 'germany.png', 'Asia/Ho_Chi_Minh');
 
     await serviceWorldTime.getTime();
 
     Navigator.pushNamed(context, '/home',
-        arguments: new Time(serviceWorldTime.location, serviceWorldTime.time,
-            serviceWorldTime.flag, serviceWorldTime.isDaytime));
+        arguments: {
+          'location': serviceWorldTime.location,
+          'time': serviceWorldTime.time,
+          'flag': serviceWorldTime.flag,
+          'isDaytime': serviceWorldTime.isDaytime
+        });
   }
 
   @override

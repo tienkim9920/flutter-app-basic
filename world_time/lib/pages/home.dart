@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:world_time/models/time.dart';
+import 'package:world_time/service/world_time.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -11,12 +9,29 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  Map data = {};
+
+  void getUpdateWorldTime() async {
+    ServiceWorldTime result = await Navigator.pushNamed(context, '/location') as ServiceWorldTime;
+
+    // setState(() => {
+    //   data = {
+    //     'time': result.time,
+    //     'location': result.location,
+    //     'isDaytime': result.isDaytime,
+    //     'flag': result.flag
+    //   }  
+    // });
+    print(result.time);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final time = ModalRoute.of(context)!.settings.arguments as Time;
+    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments as Map;
 
-    String bgImage = time.isDayTime ? 'day.png' : 'night.png';
-    Color colorImage = time.isDayTime ? Colors.white : Colors.black;
+    String bgImage = data['isDaytime'] ? 'day.png' : 'night.png';
+    Color colorImage = data['isDaytime'] ? Colors.white : Colors.black;
 
     return Scaffold(
       appBar: AppBar(
@@ -37,7 +52,7 @@ class _HomeState extends State<Home> {
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
                           Color.fromRGBO(13, 71, 161, 1))),
-                  onPressed: () => Navigator.pushNamed(context, '/location'),
+                  onPressed: () => getUpdateWorldTime(),
                   icon: Icon(Icons.edit_location),
                   label: Padding(
                       padding: EdgeInsets.all(10.0),
@@ -48,14 +63,14 @@ class _HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    time.location,
+                    data['location'],
                     style: TextStyle(
                         fontSize: 28.0, letterSpacing: 2.0, color: colorImage),
                   ),
                 ],
               ),
               SizedBox(height: 20.0),
-              Text(time.time,
+              Text(data['time'],
                   style: TextStyle(fontSize: 50.0, color: colorImage)),
             ]),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:world_time/service/world_time.dart';
 
 class ChooseLocation extends StatefulWidget {
   const ChooseLocation({Key? key}) : super(key: key);
@@ -8,6 +9,23 @@ class ChooseLocation extends StatefulWidget {
 }
 
 class _ChooseLocationState extends State<ChooseLocation> {
+  
+  List<ServiceWorldTime> serviceWorld = [
+    ServiceWorldTime('New York', 'newyork.png', 'America/New_York'),
+    ServiceWorldTime('Maceio', 'mecio.png', 'America/Maceio'),
+    ServiceWorldTime('Hồ Chí Minh', 'vietnam.png', 'Asia/Ho_Chi_Minh'),
+    ServiceWorldTime('Seoul', 'seoul.png', 'Asia/Seoul'),
+    ServiceWorldTime('Singapore', 'singapore.png', 'Asia/Singapore'),
+    ServiceWorldTime('Japan', 'tokyo.png', 'Asia/Tokyo'),
+  ];
+
+  void getUpdateTime(index) async {
+    ServiceWorldTime worldChoose = serviceWorld[index];
+    worldChoose.getTime();
+
+    Navigator.pop(context, worldChoose);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,8 +36,20 @@ class _ChooseLocationState extends State<ChooseLocation> {
         centerTitle: true,
         elevation: 0,
       ),
-      body: SafeArea(
-        child: Text('Choose Location Screen'),
+      body: Container(
+        margin: EdgeInsets.only(top: 15),
+        child: ListView.builder(
+          itemCount: serviceWorld.length,
+          itemBuilder: (context, index) {
+            return Card(
+              child: ListTile(
+                onTap: () => getUpdateTime(index),
+                title: Text(serviceWorld[index].location),
+                leading: CircleAvatar(backgroundImage: AssetImage('assets/${serviceWorld[index].flag}')),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
