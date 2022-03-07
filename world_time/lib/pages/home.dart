@@ -9,26 +9,26 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
-  Map data = {};
+  late Map data = {};
 
   void getUpdateWorldTime() async {
-    ServiceWorldTime result = await Navigator.pushNamed(context, '/location') as ServiceWorldTime;
-
-    // setState(() => {
-    //   data = {
-    //     'time': result.time,
-    //     'location': result.location,
-    //     'isDaytime': result.isDaytime,
-    //     'flag': result.flag
-    //   }  
-    // });
-    print(result.time);
+    ServiceWorldTime result =
+        await Navigator.pushNamed(context, '/location') as ServiceWorldTime;
+    setState(() => {
+          data = {
+            'time': result.time,
+            'location': result.location,
+            'isDaytime': result.isDaytime,
+            'flag': result.flag
+          }
+        });
   }
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments as Map;
+    data = data.isNotEmpty
+        ? data
+        : ModalRoute.of(context)!.settings.arguments as Map;
 
     String bgImage = data['isDaytime'] ? 'day.png' : 'night.png';
     Color colorImage = data['isDaytime'] ? Colors.white : Colors.black;

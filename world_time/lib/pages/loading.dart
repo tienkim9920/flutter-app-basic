@@ -19,13 +19,12 @@ class _LoadingState extends State<Loading> {
 
     await serviceWorldTime.getTime();
 
-    Navigator.pushNamed(context, '/home',
-        arguments: {
-          'location': serviceWorldTime.location,
-          'time': serviceWorldTime.time,
-          'flag': serviceWorldTime.flag,
-          'isDaytime': serviceWorldTime.isDaytime
-        });
+    Navigator.pushNamed(context, '/home', arguments: {
+      'location': serviceWorldTime.location,
+      'time': serviceWorldTime.time,
+      'flag': serviceWorldTime.flag,
+      'isDaytime': serviceWorldTime.isDaytime
+    });
   }
 
   @override

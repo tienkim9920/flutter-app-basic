@@ -9,7 +9,6 @@ class ChooseLocation extends StatefulWidget {
 }
 
 class _ChooseLocationState extends State<ChooseLocation> {
-  
   List<ServiceWorldTime> serviceWorld = [
     ServiceWorldTime('New York', 'newyork.png', 'America/New_York'),
     ServiceWorldTime('Maceio', 'mecio.png', 'America/Maceio'),
@@ -17,11 +16,13 @@ class _ChooseLocationState extends State<ChooseLocation> {
     ServiceWorldTime('Seoul', 'seoul.png', 'Asia/Seoul'),
     ServiceWorldTime('Singapore', 'singapore.png', 'Asia/Singapore'),
     ServiceWorldTime('Japan', 'tokyo.png', 'Asia/Tokyo'),
+    ServiceWorldTime('Chicago', 'chicago.png', 'America/Chicago'),
+    ServiceWorldTime('Costa Rica', 'costa_rica.png', 'America/Costa_Rica'),
   ];
 
   void getUpdateTime(index) async {
     ServiceWorldTime worldChoose = serviceWorld[index];
-    worldChoose.getTime();
+    await worldChoose.getTime();
 
     Navigator.pop(context, worldChoose);
   }
@@ -45,7 +46,9 @@ class _ChooseLocationState extends State<ChooseLocation> {
               child: ListTile(
                 onTap: () => getUpdateTime(index),
                 title: Text(serviceWorld[index].location),
-                leading: CircleAvatar(backgroundImage: AssetImage('assets/${serviceWorld[index].flag}')),
+                leading: CircleAvatar(
+                    backgroundImage:
+                        AssetImage('assets/${serviceWorld[index].flag}')),
               ),
             );
           },
