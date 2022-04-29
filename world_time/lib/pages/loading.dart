@@ -35,6 +35,10 @@ class _LoadingState extends State<Loading> {
     Navigator.pushNamed(context, '/workline');
   }
 
+  void gotoGenerateVideo() {
+    Navigator.pushNamed(context, '/generate');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,6 +100,21 @@ class _LoadingState extends State<Loading> {
               label: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text("Manager Work Line"),
+              ),
+            ),
+            SizedBox(
+              height: 6.0,
+            ),
+            ElevatedButton.icon(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+              ),
+              onPressed: () => gotoGenerateVideo(),
+              icon: Icon(Icons.edit_location),
+              label: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text("Generate Video"),
               ),
             ),
           ],

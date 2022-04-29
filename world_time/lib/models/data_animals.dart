@@ -11,4 +11,7 @@ final allAnimals = [
   Animal('assets/bird.png', AnimalType.air),
   Animal('assets/dog.png', AnimalType.land),
   Animal('assets/cat.png', AnimalType.land),
+  Animal('assets/bird.png', AnimalType.air),
+  Animal('assets/dog.png', AnimalType.land),
+  Animal('assets/cat.png', AnimalType.land),
 ];
