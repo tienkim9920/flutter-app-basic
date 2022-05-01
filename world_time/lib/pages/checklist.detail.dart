@@ -43,7 +43,7 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
   late Map<dynamic, dynamic> data = {};
   ChecklistModel checklistModel = ChecklistModel();
 
-  bool messSuccess = false;
+  String messSuccess = '';
 
   @override
   void initState() {
@@ -56,17 +56,27 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
     await ChecklistService().postChecklist(
         ChecklistMapping().MapServiceAddChecklist(checklistModel));
     setState(() {
-      messSuccess = true;
+      messSuccess = 'Bạn Đã Thêm Thành Công';
+      checklistModel.name.text = '';
+      checklistModel.content.text = '';
     });
   }
 
-  handleUpdateChecklist() {
-    print('update');
+  bool flagUpdate = false;
+
+  handleUpdateChecklist(String id) async {
+    setState(() {
+      checklistModel.name.text = checklistModel.name.text;
+      checklistModel.content.text = checklistModel.content.text;
+      messSuccess = 'Bạn Đã Chỉnh Sửa Thành Công';
+      flagUpdate = true;
+    });
+    checklistModel.id = id;
+    await ChecklistService().updateChecklist(
+        ChecklistMapping().MapServiceUpdateChecklist(checklistModel));
   }
 
-  gobackChecklist() {
-    
-  }
+  gobackChecklist() {}
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +84,7 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
         ? data
         : ModalRoute.of(context)!.settings.arguments as Map;
 
-    if (data['view'] != 'create') {
+    if (data['view'] != 'create' && !flagUpdate) {
       checklistModel.name.text = data['name'];
       checklistModel.content.text = data['content'];
       checklistModel.hour = data['hour'];
@@ -94,7 +104,8 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
                 MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
-                    child: Icon(Icons.arrow_back, color: Colors.white, size: 30),
+                    child:
+                        Icon(Icons.arrow_back, color: Colors.white, size: 30),
                     onTap: () => Navigator.pop(context, true),
                   ),
                 ),
@@ -150,6 +161,7 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
                   onChanged: (String? newValue) {
                     setState(() {
                       checklistModel.hour = newValue!;
+                      flagUpdate = true;
                     });
                   },
                   items: dataHour.map<DropdownMenuItem<String>>((String value) {
@@ -173,6 +185,7 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
                   onChanged: (String? newValue) {
                     setState(() {
                       checklistModel.minutes = newValue!;
+                      flagUpdate = true;
                     });
                   },
                   items:
@@ -197,6 +210,7 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
                   onChanged: (String? newValue) {
                     setState(() {
                       checklistModel.current = newValue!;
+                      flagUpdate = true;
                     });
                   },
                   items:
@@ -215,18 +229,16 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
               20,
               20,
               data['view'] == 'create' ? 'Thêm' : 'Chỉnh sửa',
-              'create',
+              data['view'] == 'create' ? 'create' : data['view'],
               data['view'] == 'create'
                   ? (id) => handleCreateChecklist()
-                  : (id) => handleUpdateChecklist(),
+                  : (id) => handleUpdateChecklist(id),
               data['view'] == 'create' ? Icons.create : Icons.update,
               true),
           SizedBox(height: 20),
-          messSuccess
-              ? Text('Bạn Đã Thêm Thành Công',
-                  style: TextStyle(
-                      color: Color.fromRGBO(48, 135, 189, 1), fontSize: 20))
-              : Text(''),
+          Text(messSuccess,
+              style: TextStyle(
+                  color: Color.fromRGBO(48, 135, 189, 1), fontSize: 20))
         ],
       ),
     );

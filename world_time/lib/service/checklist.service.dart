@@ -21,4 +21,20 @@ class ChecklistService {
     );
     return response.body;
   }
+
+  Future<dynamic> deleteChecklist(int id) async {
+    Response response = await get(
+      Uri.parse('http://api.phanmemquocbao.com/api/Doituong/deleteObject?id=${id}&tokende=lethibaotran'),
+      headers: headers,
+    );
+    return response.body;
+  }
+
+  Future<dynamic> updateChecklist(String url) async {
+    Response response = await get(
+      Uri.parse(url),
+      headers: headers,
+    );
+    return response.body;
+  }
 }

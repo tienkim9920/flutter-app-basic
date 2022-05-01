@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class ChecklistModel {
+  String? id;
   String? category; //p0 tienkim
   TextEditingController name = TextEditingController(); //p1
   TextEditingController content = TextEditingController(); //p2

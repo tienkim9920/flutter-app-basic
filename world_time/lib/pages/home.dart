@@ -16,7 +16,7 @@ class _HomeState extends State<Home> {
     print("16");
     ServiceWorldTime result =
         await Navigator.pushNamed(context, '/location') as ServiceWorldTime;
-        print("19");
+    print("19");
     setState(() => {
           data = {
             'location': result.location,
@@ -29,6 +29,10 @@ class _HomeState extends State<Home> {
 
   void gotoBook() {
     Navigator.pushNamed(context, '/checklist');
+  }
+
+  void gotoWorkline() {
+    Navigator.pushNamed(context, '/workline');
   }
 
   @override
@@ -47,8 +51,13 @@ class _HomeState extends State<Home> {
               image: DecorationImage(
                   image: AssetImage('assets/$bgImage'), fit: BoxFit.cover)),
           child: Container(
-            margin: const EdgeInsets.only(top: 220),
+            margin: const EdgeInsets.only(top: 150),
             child: Column(children: [
+              Text(
+                'Nguyễn Kim Tiền',
+                style: TextStyle(fontSize: 25, color: Colors.white),
+              ),
+              SizedBox(height: 60),
               ElevatedButton.icon(
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
@@ -89,7 +98,7 @@ class _HomeState extends State<Home> {
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
                           Color.fromRGBO(48, 135, 189, 1))),
-                  onPressed: () => {},
+                  onPressed: () => gotoWorkline(),
                   icon: Icon(Icons.checklist),
                   label: Padding(
                       padding: EdgeInsets.all(10.0),

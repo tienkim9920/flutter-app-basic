@@ -39,7 +39,8 @@ class _ChecklistPageState extends State<ChecklistPage> {
   }
 
   gotoChecklistDetail(String id) {
-    dynamic data = checklists.singleWhere((element) => element['Id'].toString() == id);
+    dynamic data =
+        checklists.singleWhere((element) => element['Id'].toString() == id);
     Navigator.pushNamed(context, '/checklist/detail', arguments: {
       'view': data['Id'].toString(),
       'name': data['p1'].toString(),
@@ -48,6 +49,14 @@ class _ChecklistPageState extends State<ChecklistPage> {
       'minutes': data['p4'],
       'current': data['p5'],
     }).then((_) => getChecklistData());
+  }
+
+  void handleChecklistDelete(int id) async {
+    int index = checklists.indexWhere((element) => element['Id'] == id);
+    setState(() {
+      checklists.removeAt(index);
+    });
+    await ChecklistService().deleteChecklist(id);
   }
 
   @override
@@ -81,7 +90,10 @@ class _ChecklistPageState extends State<ChecklistPage> {
                 scrollDirection: Axis.vertical,
                 children: [
                   ...checklists
-                      .map((e) => ChecklistComponent(e, (id) => print(id), (id) => gotoChecklistDetail(id.toString())))
+                      .map((e) => ChecklistComponent(
+                          e,
+                          (id) => handleChecklistDelete(id),
+                          (id) => gotoChecklistDetail(id.toString())))
                       .toList(),
                 ],
               ),

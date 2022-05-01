@@ -35,7 +35,7 @@ class ChecklistComponent extends StatelessWidget {
                 ),
                 SizedBox(height: 6.0),
                 Text(
-                  '${checklistModel['p3']} ${checklistModel['p4']} ${checklistModel['p5']}',
+                  '${checklistModel['p3']}h${checklistModel['p4']} ${checklistModel['p5']}',
                   style: TextStyle(
                     fontSize: 14.0,
                     color: Colors.grey[800],
