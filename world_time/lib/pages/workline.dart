@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:world_time/component/line.component.dart';
+import 'package:world_time/mapping/checklist.mapping.dart';
+import 'package:world_time/models/checklist.model.dart';
 import 'package:world_time/models/data_color.dart';
 import 'package:world_time/pattern/checklist.pattern.dart';
 import 'package:world_time/service/checklist.service.dart';
@@ -17,6 +19,9 @@ class _WorkLineState extends State<WorkLine> {
   List<dynamic> monday = [];
   List<dynamic> tuesday = [];
   List<dynamic> wednesday = [];
+  List<dynamic> thursday = [];
+  List<dynamic> friday = [];
+  List<dynamic> saturday = [];
 
   @override
   void initState() {
@@ -31,11 +36,27 @@ class _WorkLineState extends State<WorkLine> {
         {'Id': 1},
         ...cloneData(res)
       ]);
+      monday = cloneDay(res, 'monday');
+      tuesday = cloneDay(res, 'tuesday');
+      wednesday = cloneDay(res, 'wednesday');
+      thursday = cloneDay(res, 'thursday');
+      friday = cloneDay(res, 'friday');
+      saturday = cloneDay(res, 'saturday');
     });
   }
 
+  cloneDay(List<dynamic> data, String week) {
+    return data
+        .where((element) => element['p0'] == 'tienkim' && element['p6'] == week)
+        .toList();
+  }
+
   cloneData(List<dynamic> data) {
-    return data.where((element) => element['p0'] == 'tienkim').toList();
+    return data
+        .where((element) =>
+            element['p0'] == 'tienkim' &&
+            element['p6'].toString() == null.toString())
+        .toList();
   }
 
   void removeChecklist(dynamic data) {
@@ -43,9 +64,13 @@ class _WorkLineState extends State<WorkLine> {
     monday.removeWhere((element) => element['Id'] == data['Id']);
     tuesday.removeWhere((element) => element['Id'] == data['Id']);
     wednesday.removeWhere((element) => element['Id'] == data['Id']);
+    thursday.removeWhere((element) => element['Id'] == data['Id']);
+    friday.removeWhere((element) => element['Id'] == data['Id']);
+    saturday.removeWhere((element) => element['Id'] == data['Id']);
   }
 
   void handleMonday(dynamic data) {
+    createModel(data, 'monday');  
     setState(() {
       if (data['Id'] == 1) {
         return;
@@ -56,6 +81,7 @@ class _WorkLineState extends State<WorkLine> {
   }
 
   void handleTuesday(dynamic data) {
+    createModel(data, 'tuesday');    
     setState(() {
       if (data['Id'] == 1) {
         return;
@@ -66,6 +92,7 @@ class _WorkLineState extends State<WorkLine> {
   }
 
   void handleWednesday(dynamic data) {
+    createModel(data, 'wednesday');
     setState(() {
       if (data['Id'] == 1) {
         return;
@@ -73,6 +100,52 @@ class _WorkLineState extends State<WorkLine> {
       removeChecklist(data);
       wednesday.add(data);
     });
+  }
+
+  void handleThursday(dynamic data) {
+    createModel(data, 'thursday');
+    setState(() {
+      if (data['Id'] == 1) {
+        return;
+      }
+      removeChecklist(data);
+      thursday.add(data);
+    });
+  }
+
+  void handleFriday(dynamic data) {
+    createModel(data, 'friday');
+    setState(() {
+      if (data['Id'] == 1) {
+        return;
+      }
+      removeChecklist(data);
+      friday.add(data);
+    });
+  }
+
+  void handleSaturday(dynamic data) {
+    createModel(data, 'saturday');
+    setState(() {
+      if (data['Id'] == 1) {
+        return;
+      }
+      removeChecklist(data);
+      saturday.add(data);
+    });
+  }
+
+  void createModel(dynamic data, String week) {
+    ChecklistModel checklistModel = ChecklistModel();
+    checklistModel.id = data['Id'].toString();
+    checklistModel.name.text = data['p1'];
+    checklistModel.content.text = data['p2'];
+    checklistModel.hour = data['p3'];
+    checklistModel.minutes = data['p4'];
+    checklistModel.current = data['p5'];
+    checklistModel.week = week;
+    ChecklistService().updateChecklist(
+        ChecklistMapping().MapServiceUpdateChecklist(checklistModel));
   }
 
   @override
@@ -103,6 +176,15 @@ class _WorkLineState extends State<WorkLine> {
                     SizedBox(height: 8.0),
                     LineComponent(
                         'Thứ 4', wednesday, (data) => handleWednesday(data)),
+                    SizedBox(height: 8.0),
+                    LineComponent(
+                        'Thứ 5', thursday, (data) => handleThursday(data)),
+                    SizedBox(height: 8.0),
+                    LineComponent(
+                        'Thứ 6', friday, (data) => handleFriday(data)),
+                    SizedBox(height: 8.0),
+                    LineComponent(
+                        'Thứ 7', saturday, (data) => handleSaturday(data)),
                   ],
                 ),
               ),
@@ -123,6 +205,7 @@ class _WorkLineState extends State<WorkLine> {
                                       feedback: buildImageRoot(item)),
                           onWillAccept: (data) => true,
                           onAccept: (dynamic data) {
+                            createModel(data, 'null');  
                             setState(() {
                               if (data['Id'] == 1) {
                                 return;
