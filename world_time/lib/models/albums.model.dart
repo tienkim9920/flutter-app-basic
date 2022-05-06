@@ -1,6 +1,7 @@
 class AlbumModel {
-  String userId;
-  String id;
   String title;
-  AlbumModel(this.userId, this.id, this.title);
+  String username;
+  String body;
+  String phone;
+  AlbumModel(this.title, this.username, this.body, this.phone);
 }

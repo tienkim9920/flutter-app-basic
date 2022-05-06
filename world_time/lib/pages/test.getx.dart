@@ -4,6 +4,8 @@ import 'package:world_time/getX/album.controller.dart';
 import 'package:world_time/getX/count.controller.dart';
 import 'package:world_time/getX/sum.controller.dart';
 import 'package:world_time/getX/user.controller.dart';
+import 'package:world_time/mapping/album.mapping.dart';
+import 'package:world_time/models/albums.model.dart';
 
 class TestGetX extends StatefulWidget {
   const TestGetX({Key? key}) : super(key: key);
@@ -108,7 +110,7 @@ class _TestGetXState extends State<TestGetX> {
           ),
           SizedBox(height: 20),
           Container(
-            height: 300,
+            height: 200,
             child: Obx(
               () {
                 if (albumController.isLoading.value) {
@@ -124,7 +126,21 @@ class _TestGetXState extends State<TestGetX> {
                 }
               },
             ),
-          )
+          ),
+          GestureDetector(
+            onTap: () {
+              AlbumModel albumModel =
+                  AlbumModel('Test', 'Test', 'Test', 'Test');
+              Get.find<AlbumController>()
+                  .postData(AlbumMapping().MapServiceAlbum(albumModel));
+            },
+            child: Container(
+              width: 100,
+              color: Colors.red,
+              child: Text("Post Album",
+                  style: TextStyle(fontSize: 20, color: Colors.yellowAccent)),
+            ),
+          ),
         ],
       ),
     );
