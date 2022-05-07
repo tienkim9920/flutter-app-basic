@@ -29,7 +29,7 @@ class _ChecklistPageState extends State<ChecklistPage> {
   }
 
   cloneData(List<dynamic> data) {
-    return data.where((element) => element['p0'] == 'tienkim').toList();
+    return data.where((element) => element['p0'] == 'toannguyen').toList();
   }
 
   gotoChecklistCreate() {
@@ -44,10 +44,11 @@ class _ChecklistPageState extends State<ChecklistPage> {
     Navigator.pushNamed(context, '/checklist/detail', arguments: {
       'view': data['Id'].toString(),
       'name': data['p1'].toString(),
-      'content': data['p2'].toString(),
-      'hour': data['p3'],
-      'minutes': data['p4'],
-      'current': data['p5'],
+      'price': data['p2'].toString(),
+      'quantity': data['p3'],
+      'description': data['p4'],
+      'location': data['p5'],
+      'employeeImport': data['p6'],
     }).then((_) => getChecklistData());
   }
 
@@ -63,7 +64,7 @@ class _ChecklistPageState extends State<ChecklistPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Quản lý công việc'),
+          title: Text('Quản Lý Xe Moto'),
           centerTitle: true,
           backgroundColor: Color.fromRGBO(48, 135, 189, 1),
         ),
@@ -76,8 +77,8 @@ class _ChecklistPageState extends State<ChecklistPage> {
               bottom: 0,
               child: Column(
                 children: [
-                  ButtonIcon(20, 20, 'Tạo Mới Công Việc', 'create',
-                      (id) => gotoChecklistCreate(), Icons.create, true)
+                  ButtonIcon(20, 20, 'Tạo Mới Xe Moto', 'create',
+                      (id) => gotoChecklistCreate(), Icons.create, true, true)
                 ],
               ),
             ),
