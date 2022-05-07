@@ -8,9 +8,10 @@ class ButtonIcon extends StatelessWidget {
   final Function excutiveEvent;
   final IconData icon;
   final bool widthHorizontal;
+  final bool disable;
 
-  const ButtonIcon(this.paddingLeft, this.paddingRight, this.text,
-      this.id, this.excutiveEvent, this.icon, this.widthHorizontal,
+  const ButtonIcon(this.paddingLeft, this.paddingRight, this.text, this.id,
+      this.excutiveEvent, this.icon, this.widthHorizontal, this.disable,
       {Key? key})
       : super(key: key);
 
@@ -30,7 +31,9 @@ class ButtonIcon extends StatelessWidget {
                         foregroundColor:
                             MaterialStateProperty.all<Color>(Colors.white),
                         backgroundColor: MaterialStateProperty.all<Color>(
-                            Color.fromRGBO(48, 135, 189, 1)),
+                            disable
+                                ? Color.fromRGBO(48, 135, 189, 1)
+                                : Color.fromARGB(255, 218, 218, 218)),
                         shadowColor: MaterialStateProperty.all<Color>(
                             Colors.transparent),
                         shape:
