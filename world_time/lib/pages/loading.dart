@@ -11,15 +11,14 @@ class Loading extends StatefulWidget {
 class _LoadingState extends State<Loading> {
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 3),
-      () => gotoScreenHome());
+    Future.delayed(const Duration(seconds: 3), () => gotoScreenHome());
 
     super.initState();
   }
 
   void gotoScreenHome() async {
     ServiceWorldTime serviceWorldTime =
-        ServiceWorldTime('Ho Chi Minh', 'germany.png', 'Asia/Ho_Chi_Minh');
+        ServiceWorldTime('Ho Chi Minh', 'vietnam.png', 'Asia/Ho_Chi_Minh');
     await serviceWorldTime.getTime();
 
     Navigator.pushNamed(context, '/home', arguments: {
@@ -43,10 +42,7 @@ class _LoadingState extends State<Loading> {
                   Image.asset('assets/checklist.png', width: 150, height: 100),
                   Text(
                     'Sổ Tay',
-                    style: TextStyle(
-                      fontSize: 32,
-                      color: Colors.white
-                    ),
+                    style: TextStyle(fontSize: 32, color: Colors.white),
                   )
                 ],
               )

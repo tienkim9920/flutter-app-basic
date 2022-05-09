@@ -10,14 +10,14 @@ class ChooseLocation extends StatefulWidget {
 
 class _ChooseLocationState extends State<ChooseLocation> {
   List<ServiceWorldTime> serviceWorld = [
-    ServiceWorldTime('New York', 'newyork.png', 'America/New_York'),
-    ServiceWorldTime('Maceio', 'mecio.png', 'America/Maceio'),
+    // ServiceWorldTime('New York', 'newyork.png', 'America/New_York'),
+    // ServiceWorldTime('Maceio', 'mecio.png', 'America/Maceio'),
     ServiceWorldTime('Hồ Chí Minh', 'vietnam.png', 'Asia/Ho_Chi_Minh'),
     ServiceWorldTime('Seoul', 'seoul.png', 'Asia/Seoul'),
     ServiceWorldTime('Singapore', 'singapore.png', 'Asia/Singapore'),
     ServiceWorldTime('Japan', 'tokyo.png', 'Asia/Tokyo'),
-    ServiceWorldTime('Chicago', 'chicago.png', 'America/Chicago'),
-    ServiceWorldTime('Costa Rica', 'costa_rica.png', 'America/Costa_Rica'),
+    // ServiceWorldTime('Chicago', 'chicago.png', 'America/Chicago'),
+    // ServiceWorldTime('Costa Rica', 'costa_rica.png', 'America/Costa_Rica'),
     ServiceWorldTime('Vladivostok', 'vladivostok.png', 'Asia/Vladivostok'),
   ];
 

@@ -21,7 +21,7 @@ class ChecklistComponent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Text(
-                  'Tên Moto: ${checklistModel['p1']}',
+                  'Tên đơn hàng: ${checklistModel['p1']}',
                   style: TextStyle(
                     fontSize: 18.0,
                     color: Colors.grey[600],
@@ -29,7 +29,7 @@ class ChecklistComponent extends StatelessWidget {
                 ),
                 SizedBox(height: 6.0),
                 Text(
-                  'Giá Moto: ${checklistModel['p2']}',
+                  'Địa chỉ: ${checklistModel['p2']}',
                   style: TextStyle(
                     fontSize: 14.0,
                     color: Colors.grey[800],
@@ -37,7 +37,7 @@ class ChecklistComponent extends StatelessWidget {
                 ),
                 SizedBox(height: 6.0),
                 Text(
-                  'Số lượng Moto: ${checklistModel['p3']}',
+                  'Email: ${checklistModel['p3']}',
                   style: TextStyle(
                     fontSize: 14.0,
                     color: Colors.grey[800],
@@ -45,7 +45,7 @@ class ChecklistComponent extends StatelessWidget {
                 ),
                 SizedBox(height: 6.0),
                 Text(
-                  'Địa chỉ nhập: ${checklistModel['p5']}',
+                  'Tổng đơn hàng: ${checklistModel['p5']}',
                   style: TextStyle(
                     fontSize: 14.0,
                     color: Colors.grey[800],

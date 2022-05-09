@@ -43,7 +43,7 @@ class LineComponent extends StatelessWidget {
         color: Colors.white,
         child: DragTarget(
           builder: (context, candidateData, rejectedData) => Center(
-              child: Row(
+              child: Column(
             children: [
               ...today
                   .map((item) => Draggable(

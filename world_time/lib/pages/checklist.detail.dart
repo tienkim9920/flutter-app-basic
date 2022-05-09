@@ -29,16 +29,12 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
 
   handleValidation() {
     if (checklistValidation.name != '' &&
-        checklistValidation.price != '' &&
-        checklistValidation.quantity != '' &&
-        checklistValidation.description != '' &&
-        checklistValidation.location != '' &&
-        checklistValidation.employeeImport != '' &&
-        !!RegExp(r'[0-9]').hasMatch(checklistValidation.quantity.toString()) &&
-        !!RegExp(r'[0-9]').hasMatch(checklistValidation.price.toString()) &&
+        checklistValidation.address != '' &&
+        checklistValidation.product != '' &&
+        !!RegExp(r'[0-9]').hasMatch(checklistValidation.total.toString()) &&
         !!RegExp(
                 r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-            .hasMatch(checklistValidation.employeeImport.toString())) {
+            .hasMatch(checklistValidation.email.toString())) {
       return true;
     }
     return false;
@@ -46,11 +42,11 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
 
   resetValidation() {
     checklistValidation.name = '';
-    checklistValidation.price = '';
-    checklistValidation.quantity = '';
-    checklistValidation.description = '';
-    checklistValidation.location = '';
-    checklistValidation.employeeImport = '';
+    checklistValidation.address = '';
+    checklistValidation.email = '';
+    checklistValidation.product = '';
+    checklistValidation.total = '';
+    checklistValidation.status = '0';
     submitted = false;
   }
 
@@ -68,11 +64,11 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
     setState(() {
       messSuccess = 'Bạn Đã Thêm Thành Công';
       checklistModel.name.text = '';
-      checklistModel.price.text = '';
-      checklistModel.quantity.text = '';
-      checklistModel.description.text = '';
-      checklistModel.location.text = '';
-      checklistModel.employeeImport.text = '';
+      checklistModel.address.text = '';
+      checklistModel.email.text = '';
+      checklistModel.product.text = '';
+      checklistModel.total.text = '';
+      checklistModel.status = '0';
       resetValidation();
     });
   }
@@ -90,11 +86,10 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
     }
     setState(() {
       checklistModel.name.text = checklistModel.name.text;
-      checklistModel.price.text = checklistModel.price.text;
-      checklistModel.quantity.text = checklistModel.quantity.text;
-      checklistModel.description.text = checklistModel.description.text;
-      checklistModel.location.text = checklistModel.location.text;
-      checklistModel.employeeImport.text = checklistModel.employeeImport.text;
+      checklistModel.address.text = checklistModel.address.text;
+      checklistModel.email.text = checklistModel.email.text;
+      checklistModel.product.text = checklistModel.product.text;
+      checklistModel.total.text = checklistModel.total.text;
       messSuccess = 'Bạn Đã Chỉnh Sửa Thành Công';
     });
     checklistModel.id = id;
@@ -104,14 +99,14 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
 
   gobackChecklist() {}
 
-  redirectLocation() async {
+  redirectAddress() async {
     await launch(
-        'https://www.google.com/maps/place/${checklistModel.location.text}');
+        'https://www.google.com/maps/place/${checklistModel.address.text}');
   }
 
   redirectMail() async {
     await launch(
-        'mailto:${checklistModel.employeeImport.text}?subject=Subject mail&body=Body mail');
+        'mailto:${checklistModel.email.text}?subject=Subject mail&body=Body mail');
   }
 
   @override
@@ -122,18 +117,17 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
 
     if (data['view'] != 'create' && !flagUpdate) {
       checklistModel.name.text = data['name'];
-      checklistModel.price.text = data['price'];
-      checklistModel.quantity.text = data['quantity'];
-      checklistModel.description.text = data['description'];
-      checklistModel.location.text = data['location'];
-      checklistModel.employeeImport.text = data['employeeImport'];
+      checklistModel.address.text = data['address'];
+      checklistModel.email.text = data['email'];
+      checklistModel.product.text = data['product'];
+      checklistModel.total.text = data['total'];
+      checklistModel.status = data['status'];
 
       checklistValidation.name = data['name'];
-      checklistValidation.price = data['price'];
-      checklistValidation.quantity = data['quantity'];
-      checklistValidation.description = data['description'];
-      checklistValidation.location = data['location'];
-      checklistValidation.employeeImport = data['employeeImport'];
+      checklistValidation.address = data['address'];
+      checklistValidation.email = data['email'];
+      checklistValidation.product = data['product'];
+      checklistValidation.total = data['total'];
 
       setState(() {
         flagUpdate = true;
@@ -161,8 +155,8 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
                   ),
                   Text(
                     data['view'] == 'create'
-                        ? 'Tạo công việc'
-                        : 'Chỉnh sửa công việc',
+                        ? 'Tạo đơn hàng'
+                        : 'Chỉnh sửa đơn hàng',
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   Container(
@@ -174,13 +168,13 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: TextField(
                 controller: checklistModel.name,
                 decoration: InputDecoration(
-                    labelText: 'Tên Mô Tô',
+                    labelText: 'Tên Đơn Hàng',
                     errorText: checklistValidation.name == '' && submitted
-                        ? 'Vui lòng nhập tên Mô Tô'
+                        ? 'Vui lòng nhập tên đơn hàng'
                         : null),
                 onChanged: (text) => setState(() {
                   checklistValidation.name = text;
@@ -188,93 +182,73 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: TextField(
-                controller: checklistModel.price,
+                controller: checklistModel.address,
                 decoration: InputDecoration(
-                    labelText: 'Giá Moto',
-                    errorText: checklistValidation.price == '' && submitted
-                        ? 'Vui lòng nhập giá Mô Tô'
-                        : !RegExp(r'[0-9]').hasMatch(
-                                    checklistValidation.price.toString()) &&
-                                submitted
-                            ? 'Định dạng sai thông tin'
-                            : null),
-                onChanged: (text) => setState(() {
-                  checklistValidation.price = text;
-                }),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: TextField(
-                controller: checklistModel.quantity,
-                decoration: InputDecoration(
-                    labelText: 'Số lượng',
-                    errorText: checklistValidation.quantity == '' && submitted
-                        ? 'Vui lòng nhập số lượng Mô Tô'
-                        : !RegExp(r'[0-9]').hasMatch(
-                                    checklistValidation.quantity.toString()) &&
-                                submitted
-                            ? 'Định dạng sai thông tin'
-                            : null),
-                onChanged: (text) => setState(() {
-                  checklistValidation.quantity = text;
-                }),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: TextField(
-                controller: checklistModel.description,
-                decoration: InputDecoration(
-                    labelText: 'Mô tả',
-                    errorText:
-                        checklistValidation.description == '' && submitted
-                            ? 'Vui lòng nhập mô tả Mô Tô'
-                            : null),
-                onChanged: (text) => setState(() {
-                  checklistValidation.description = text;
-                }),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: TextField(
-                controller: checklistModel.location,
-                decoration: InputDecoration(
-                    labelText: 'Địa chỉ',
-                    errorText: checklistValidation.location == '' && submitted
-                        ? 'Vui lòng nhập địa chỉ Mô Tô'
+                    labelText: 'Địa chỉ nhận hàng',
+                    errorText: checklistValidation.address == '' && submitted
+                        ? 'Vui lòng nhập địa chỉ nhận hàng'
                         : null),
                 onChanged: (text) => setState(() {
-                  checklistValidation.location = text;
+                  checklistValidation.address = text;
                 }),
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: TextField(
-                controller: checklistModel.employeeImport,
+                controller: checklistModel.email,
                 decoration: InputDecoration(
-                    labelText: 'Email nhân viên',
-                    errorText: checklistValidation.employeeImport == '' &&
-                            submitted
-                        ? 'Vui lòng nhập Email nhân viên'
+                    labelText: 'Email nhận hàng',
+                    errorText: checklistValidation.email == '' && submitted
+                        ? 'Vui lòng nhập Email nhận hàng'
                         : !RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                                    .hasMatch(checklistValidation.employeeImport
-                                        .toString()) &&
+                                    .hasMatch(
+                                        checklistValidation.email.toString()) &&
                                 submitted
                             ? 'Định dạng sai thông tin'
                             : null),
                 onChanged: (text) => setState(() {
-                  checklistValidation.employeeImport = text;
+                  checklistValidation.email = text;
+                }),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: TextField(
+                controller: checklistModel.product,
+                decoration: InputDecoration(
+                    labelText: 'Sản phẩm Mua',
+                    errorText: checklistValidation.product == '' && submitted
+                        ? 'Vui lòng nhập sản phẩm mua'
+                        : null),
+                onChanged: (text) => setState(() {
+                  checklistValidation.product = text;
+                }),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: TextField(
+                controller: checklistModel.total,
+                decoration: InputDecoration(
+                    labelText: 'Tổng tiền đơn hàng',
+                    errorText: checklistValidation.total == '' && submitted
+                        ? 'Vui lòng nhập tổng tiền đơn hàng'
+                        : !RegExp(r'[0-9]').hasMatch(
+                                    checklistValidation.total.toString()) &&
+                                submitted
+                            ? 'Định dạng sai thông tin'
+                            : null),
+                onChanged: (text) => setState(() {
+                  checklistValidation.total = text;
                 }),
               ),
             ),
             SizedBox(height: 20),
             if (data['view'] != 'create') ...[
-              ButtonIcon(20, 20, 'Vị Trí', 'vitri', (id) => redirectLocation(),
+              ButtonIcon(20, 20, 'Vị Trí', 'vitri', (id) => redirectAddress(),
                   Icons.place, true, true),
               SizedBox(height: 20),
             ],

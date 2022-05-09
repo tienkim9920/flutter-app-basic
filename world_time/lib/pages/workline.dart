@@ -14,14 +14,9 @@ class WorkLine extends StatefulWidget {
 }
 
 class _WorkLineState extends State<WorkLine> {
-  // List checklist
-  List<dynamic> checklists = [];
-  List<dynamic> monday = [];
-  List<dynamic> tuesday = [];
-  List<dynamic> wednesday = [];
-  List<dynamic> thursday = [];
-  List<dynamic> friday = [];
-  List<dynamic> saturday = [];
+  List<dynamic> todo = [];
+  List<dynamic> inProgress = [];
+  List<dynamic> done = [];
 
   @override
   void initState() {
@@ -32,118 +27,87 @@ class _WorkLineState extends State<WorkLine> {
   getChecklistData() async {
     var res = await ChecklistService().getChecklists();
     setState(() {
-      checklists.addAll([
-        {'Id': 1},
-        ...cloneData(res)
+      todo.addAll([
+        {'Id': 'todo'},
+        ...cloneTodo(res)
       ]);
-      monday = cloneDay(res, 'monday');
-      tuesday = cloneDay(res, 'tuesday');
-      wednesday = cloneDay(res, 'wednesday');
-      thursday = cloneDay(res, 'thursday');
-      friday = cloneDay(res, 'friday');
-      saturday = cloneDay(res, 'saturday');
+      inProgress.addAll([
+        {'Id': 'inProgress'},
+        ...cloneInProgress(res)
+      ]);
+      done.addAll([
+        {'Id': 'done'},
+        ...cloneDone(res)
+      ]);
     });
   }
 
-  cloneDay(List<dynamic> data, String week) {
+  cloneTodo(List<dynamic> data) {
     return data
-        .where((element) => element['p0'] == 'tienkim' && element['p6'] == week)
+        .where((element) => element['p0'] == 'tienkim' && element['p6'] == '0')
         .toList();
   }
 
-  cloneData(List<dynamic> data) {
+  cloneInProgress(List<dynamic> data) {
     return data
-        .where((element) =>
-            element['p0'] == 'tienkim' &&
-            element['p6'].toString() == null.toString())
+        .where((element) => element['p0'] == 'tienkim' && element['p6'] == '1')
+        .toList();
+  }
+
+  cloneDone(List<dynamic> data) {
+    return data
+        .where((element) => element['p0'] == 'tienkim' && element['p6'] == '2')
         .toList();
   }
 
   void removeChecklist(dynamic data) {
-    checklists.removeWhere((element) => element['Id'] == data['Id']);
-    monday.removeWhere((element) => element['Id'] == data['Id']);
-    tuesday.removeWhere((element) => element['Id'] == data['Id']);
-    wednesday.removeWhere((element) => element['Id'] == data['Id']);
-    thursday.removeWhere((element) => element['Id'] == data['Id']);
-    friday.removeWhere((element) => element['Id'] == data['Id']);
-    saturday.removeWhere((element) => element['Id'] == data['Id']);
+    todo.removeWhere((element) => element['Id'] == data['Id']);
+    inProgress.removeWhere((element) => element['Id'] == data['Id']);
+    done.removeWhere((element) => element['Id'] == data['Id']);
   }
 
-  void handleMonday(dynamic data) {
-    createModel(data, 'monday');  
+  void handleTodo(dynamic data) {
     setState(() {
-      if (data['Id'] == 1) {
+      if (data['Id'] == 'todo') {
         return;
       }
+      createModel(data, '0');
       removeChecklist(data);
-      monday.add(data);
+      todo.add(data);
     });
   }
 
-  void handleTuesday(dynamic data) {
-    createModel(data, 'tuesday');    
+  void handleInProgress(dynamic data) {
     setState(() {
-      if (data['Id'] == 1) {
+      if (data['Id'] == 'inProgress') {
         return;
       }
+      createModel(data, '1');
       removeChecklist(data);
-      tuesday.add(data);
+      inProgress.add(data);
     });
   }
 
-  void handleWednesday(dynamic data) {
-    createModel(data, 'wednesday');
+  void handleDone(dynamic data) {
     setState(() {
-      if (data['Id'] == 1) {
+      if (data['Id'] == 'done') {
         return;
       }
+      createModel(data, '2');
       removeChecklist(data);
-      wednesday.add(data);
+      done.add(data);
     });
   }
 
-  void handleThursday(dynamic data) {
-    createModel(data, 'thursday');
-    setState(() {
-      if (data['Id'] == 1) {
-        return;
-      }
-      removeChecklist(data);
-      thursday.add(data);
-    });
-  }
-
-  void handleFriday(dynamic data) {
-    createModel(data, 'friday');
-    setState(() {
-      if (data['Id'] == 1) {
-        return;
-      }
-      removeChecklist(data);
-      friday.add(data);
-    });
-  }
-
-  void handleSaturday(dynamic data) {
-    createModel(data, 'saturday');
-    setState(() {
-      if (data['Id'] == 1) {
-        return;
-      }
-      removeChecklist(data);
-      saturday.add(data);
-    });
-  }
-
-  void createModel(dynamic data, String week) {
+  void createModel(dynamic data, String status) {
     ChecklistModel checklistModel = ChecklistModel();
     checklistModel.id = data['Id'].toString();
     checklistModel.name.text = data['p1'];
-    checklistModel.content.text = data['p2'];
-    checklistModel.hour = data['p3'];
-    checklistModel.minutes = data['p4'];
-    checklistModel.current = data['p5'];
-    checklistModel.week = week;
+    checklistModel.address.text = data['p2'];
+    checklistModel.email.text = data['p3'];
+    checklistModel.product.text = data['p4'];
+    checklistModel.total.text = data['p5'];
+    checklistModel.status = status;
     ChecklistService().updateChecklist(
         ChecklistMapping().MapServiceUpdateChecklist(checklistModel));
   }
@@ -153,120 +117,92 @@ class _WorkLineState extends State<WorkLine> {
     return Scaffold(
         backgroundColor: Color(0xFFF5F5F5),
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(48, 135, 189, 1),
-          title: Text('Lên Lịch Trình'),
+          backgroundColor: Color(0xFF3087BD),
+          title: Text('Quản lý hóa đơn'),
           centerTitle: true,
           elevation: 0,
         ),
-        body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 420,
-                child: Column(
-                  children: [
-                    LineComponent(
-                        'Thứ 2', monday, (data) => handleMonday(data)),
-                    SizedBox(height: 8.0),
-                    LineComponent(
-                        'Thứ 3', tuesday, (data) => handleTuesday(data)),
-                    SizedBox(height: 8.0),
-                    LineComponent(
-                        'Thứ 4', wednesday, (data) => handleWednesday(data)),
-                    SizedBox(height: 8.0),
-                    LineComponent(
-                        'Thứ 5', thursday, (data) => handleThursday(data)),
-                    SizedBox(height: 8.0),
-                    LineComponent(
-                        'Thứ 6', friday, (data) => handleFriday(data)),
-                    SizedBox(height: 8.0),
-                    LineComponent(
-                        'Thứ 7', saturday, (data) => handleSaturday(data)),
-                  ],
-                ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width - 40,
-                height: 300,
-                child: ListView(scrollDirection: Axis.vertical, children: [
-                  Column(
-                    children: [
-                      ...checklists.map(
-                        (item) => DragTarget(
-                          builder: (context, candidateData, rejectedData) =>
-                              item['Id'] == 1
-                                  ? buildImageStatic()
-                                  : Draggable(
-                                      data: item,
-                                      child: buildImageRoot(item),
-                                      feedback: buildImageRoot(item)),
-                          onWillAccept: (data) => true,
-                          onAccept: (dynamic data) {
-                            createModel(data, 'null');  
-                            setState(() {
-                              if (data['Id'] == 1) {
-                                return;
-                              }
-                              removeChecklist(data);
-                              checklists.add(data);
-                            });
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ]),
-              ),
-            ],
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                buildDragDrop(
+                    todo, 'todo', 'Đang xử lý', (data) => handleTodo(data)),
+                SizedBox(height: 10),
+                buildDragDrop(inProgress, 'inProgress', 'Đang vận chuyển',
+                    (data) => handleInProgress(data)),
+                SizedBox(height: 10),
+                buildDragDrop(
+                    done, 'done', 'Hoàn Thành', (data) => handleDone(data))
+              ],
+            ),
           ),
         ));
   }
 
   Widget buildImageRoot(dynamic data) => Container(
       width: MediaQuery.of(context).size.width - 40,
-      height: 60,
-      color: Color.fromRGBO(48, 135, 189, 1),
-      margin: EdgeInsets.only(top: 6),
+      height: 50,
+      color: Color(0xFFDFDFDF),
       padding: EdgeInsets.all(5),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(
           data['p1'],
-          style: TextStyle(fontSize: 18, color: Colors.white),
+          style: TextStyle(fontSize: 18, decoration: TextDecoration.none),
           textAlign: TextAlign.center,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              data['p2'],
-              style: TextStyle(fontSize: 16, color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              '${data['p3']}h${data['p4']} ${data['p5']}',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
-          ],
+        Text(
+          data['p2'],
+          style: TextStyle(fontSize: 16, decoration: TextDecoration.none),
+          textAlign: TextAlign.center,
         )
       ]));
 
-  Widget buildImageStatic() => Container(
+  Widget buildImageStatic(String text) => Container(
         width: MediaQuery.of(context).size.width - 40,
-        height: 75,
-        color: Colors.white,
+        height: 50,
+        color: Color(0xFF3087BD),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Sắp Xếp Công Việc',
-              style: TextStyle(fontSize: 20),
+              text,
+              style: TextStyle(fontSize: 18, color: Colors.white),
               textAlign: TextAlign.center,
             )
           ],
         ),
+      );
+
+  Widget buildDragDrop(List<dynamic> data, String idColum, textColum,
+          Function handleEvent) =>
+      Container(
+        width: MediaQuery.of(context).size.width - 40,
+        height: 230,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(40),
+        ),
+        child: ListView(scrollDirection: Axis.vertical, children: [
+          Column(
+            children: [
+              ...data.map(
+                (item) => DragTarget(
+                  builder: (context, candidateData, rejectedData) =>
+                      item['Id'] == idColum
+                          ? buildImageStatic(textColum)
+                          : Draggable(
+                              data: item,
+                              child: buildImageRoot(item),
+                              feedback: buildImageRoot(item)),
+                  onWillAccept: (data) => true,
+                  onAccept: (dynamic data) => handleEvent(data),
+                ),
+              )
+            ],
+          ),
+        ]),
       );
 }

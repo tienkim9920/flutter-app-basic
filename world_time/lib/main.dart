@@ -10,9 +10,9 @@ import 'package:world_time/pages/workline.dart';
 
 void main() {
   runApp(MaterialApp(
-    initialRoute: '/home',
+    initialRoute: '/',
     routes: {
-      // '/': (context) => Loading(),
+      '/': (context) => Loading(),
       '/home': (context) => Home(),
       '/location': (context) => ChooseLocation(),
       '/checklist': (context) => ChecklistPage(),

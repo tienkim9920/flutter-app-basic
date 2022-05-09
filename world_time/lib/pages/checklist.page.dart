@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:world_time/component/button.component.dart';
 import 'package:world_time/component/checklist.component.dart';
+import 'package:world_time/component/modal.component.dart';
 import 'package:world_time/models/checklist.model.dart';
 import 'package:world_time/service/checklist.service.dart';
 
@@ -14,6 +15,9 @@ class ChecklistPage extends StatefulWidget {
 class _ChecklistPageState extends State<ChecklistPage> {
   // List checklist
   List<dynamic> checklists = [];
+
+  String currentId = '';
+  bool modalShow = false;
 
   @override
   void initState() {
@@ -29,7 +33,7 @@ class _ChecklistPageState extends State<ChecklistPage> {
   }
 
   cloneData(List<dynamic> data) {
-    return data.where((element) => element['p0'] == 'toannguyen').toList();
+    return data.where((element) => element['p0'] == 'tienkim').toList();
   }
 
   gotoChecklistCreate() {
@@ -44,11 +48,11 @@ class _ChecklistPageState extends State<ChecklistPage> {
     Navigator.pushNamed(context, '/checklist/detail', arguments: {
       'view': data['Id'].toString(),
       'name': data['p1'].toString(),
-      'price': data['p2'].toString(),
-      'quantity': data['p3'],
-      'description': data['p4'],
-      'location': data['p5'],
-      'employeeImport': data['p6'],
+      'address': data['p2'].toString(),
+      'email': data['p3'],
+      'product': data['p4'],
+      'total': data['p5'],
+      'status': data['p6'],
     }).then((_) => getChecklistData());
   }
 
@@ -56,15 +60,23 @@ class _ChecklistPageState extends State<ChecklistPage> {
     int index = checklists.indexWhere((element) => element['Id'] == id);
     setState(() {
       checklists.removeAt(index);
+      modalShow = false;
     });
     await ChecklistService().deleteChecklist(id);
+  }
+
+  void handleShowModal(String id) {
+    setState(() {
+      modalShow = true;
+      currentId = id;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Quản Lý Xe Moto'),
+          title: Text('Danh sách Đơn Hàng'),
           centerTitle: true,
           backgroundColor: Color.fromRGBO(48, 135, 189, 1),
         ),
@@ -77,7 +89,7 @@ class _ChecklistPageState extends State<ChecklistPage> {
               bottom: 0,
               child: Column(
                 children: [
-                  ButtonIcon(20, 20, 'Tạo Mới Xe Moto', 'create',
+                  ButtonIcon(20, 20, 'Tạo Mới Đơn Hàng', 'create',
                       (id) => gotoChecklistCreate(), Icons.create, true, true)
                 ],
               ),
@@ -93,12 +105,16 @@ class _ChecklistPageState extends State<ChecklistPage> {
                   ...checklists
                       .map((e) => ChecklistComponent(
                           e,
-                          (id) => handleChecklistDelete(id),
+                          (id) => handleShowModal(id.toString()),
                           (id) => gotoChecklistDetail(id.toString())))
                       .toList(),
                 ],
               ),
-            )
+            ),
+            if (modalShow) ...[
+              ModalCenter((id) => handleChecklistDelete(int.parse(id)),
+                  () => setState(() => modalShow = false), currentId)
+            ],
           ],
         ));
   }
