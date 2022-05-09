@@ -5,7 +5,9 @@ class ChecklistComponent extends StatelessWidget {
   final dynamic checklistModel;
   final Function onDelete;
   final Function onDetail;
-  const ChecklistComponent(this.checklistModel, this.onDelete, this.onDetail, {Key? key}) : super(key: key);
+  const ChecklistComponent(this.checklistModel, this.onDelete, this.onDetail,
+      {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class ChecklistComponent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Text(
-                  checklistModel['p1'],
+                  'Tên Moto: ${checklistModel['p1']}',
                   style: TextStyle(
                     fontSize: 18.0,
                     color: Colors.grey[600],
@@ -27,7 +29,7 @@ class ChecklistComponent extends StatelessWidget {
                 ),
                 SizedBox(height: 6.0),
                 Text(
-                  checklistModel['p2'],
+                  'Giá Moto: ${checklistModel['p2']}',
                   style: TextStyle(
                     fontSize: 14.0,
                     color: Colors.grey[800],
@@ -35,7 +37,15 @@ class ChecklistComponent extends StatelessWidget {
                 ),
                 SizedBox(height: 6.0),
                 Text(
-                  '${checklistModel['p3']}h${checklistModel['p4']} ${checklistModel['p5']}',
+                  'Số lượng Moto: ${checklistModel['p3']}',
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                SizedBox(height: 6.0),
+                Text(
+                  'Địa chỉ nhập: ${checklistModel['p5']}',
                   style: TextStyle(
                     fontSize: 14.0,
                     color: Colors.grey[800],

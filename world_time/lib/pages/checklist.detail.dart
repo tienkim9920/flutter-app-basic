@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:world_time/component/button.component.dart';
 import 'package:world_time/mapping/checklist.mapping.dart';
 import 'package:world_time/models/checklist.model.dart';
@@ -12,38 +13,12 @@ class ChecklistDetail extends StatefulWidget {
 }
 
 class _ChecklistDetailState extends State<ChecklistDetail> {
-  List<String> dataHour = [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11',
-    '12'
-  ];
-  List<String> dataMinutes = [
-    '5',
-    '10',
-    '15',
-    '20',
-    '25',
-    '30',
-    '35',
-    '40',
-    '45',
-    '50',
-    '55'
-  ];
-  List<String> dataCurrent = ['AM', 'PM'];
   late Map<dynamic, dynamic> data = {};
   ChecklistModel checklistModel = ChecklistModel();
+  ChecklistValidation checklistValidation = ChecklistValidation();
 
   String messSuccess = '';
+  bool submitted = false;
 
   @override
   void initState() {
@@ -52,24 +27,75 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
     super.initState();
   }
 
+  handleValidation() {
+    if (checklistValidation.name != '' &&
+        checklistValidation.price != '' &&
+        checklistValidation.quantity != '' &&
+        checklistValidation.description != '' &&
+        checklistValidation.location != '' &&
+        checklistValidation.employeeImport != '' &&
+        !!RegExp(r'[0-9]').hasMatch(checklistValidation.quantity.toString()) &&
+        !!RegExp(r'[0-9]').hasMatch(checklistValidation.price.toString()) &&
+        !!RegExp(
+                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+            .hasMatch(checklistValidation.employeeImport.toString())) {
+      return true;
+    }
+    return false;
+  }
+
+  resetValidation() {
+    checklistValidation.name = '';
+    checklistValidation.price = '';
+    checklistValidation.quantity = '';
+    checklistValidation.description = '';
+    checklistValidation.location = '';
+    checklistValidation.employeeImport = '';
+    submitted = false;
+  }
+
   handleCreateChecklist() async {
+    bool validate = handleValidation();
+    if (!validate) {
+      setState(() {
+        submitted = true;
+        messSuccess = '';
+      });
+      return;
+    }
     await ChecklistService().postChecklist(
         ChecklistMapping().MapServiceAddChecklist(checklistModel));
     setState(() {
       messSuccess = 'Bạn Đã Thêm Thành Công';
       checklistModel.name.text = '';
-      checklistModel.content.text = '';
+      checklistModel.price.text = '';
+      checklistModel.quantity.text = '';
+      checklistModel.description.text = '';
+      checklistModel.location.text = '';
+      checklistModel.employeeImport.text = '';
+      resetValidation();
     });
   }
 
   bool flagUpdate = false;
 
   handleUpdateChecklist(String id) async {
+    bool validate = handleValidation();
+    if (!validate) {
+      setState(() {
+        submitted = true;
+        messSuccess = '';
+      });
+      return;
+    }
     setState(() {
       checklistModel.name.text = checklistModel.name.text;
-      checklistModel.content.text = checklistModel.content.text;
+      checklistModel.price.text = checklistModel.price.text;
+      checklistModel.quantity.text = checklistModel.quantity.text;
+      checklistModel.description.text = checklistModel.description.text;
+      checklistModel.location.text = checklistModel.location.text;
+      checklistModel.employeeImport.text = checklistModel.employeeImport.text;
       messSuccess = 'Bạn Đã Chỉnh Sửa Thành Công';
-      flagUpdate = true;
     });
     checklistModel.id = id;
     await ChecklistService().updateChecklist(
@@ -77,6 +103,16 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
   }
 
   gobackChecklist() {}
+
+  redirectLocation() async {
+    await launch(
+        'https://www.google.com/maps/place/${checklistModel.location.text}');
+  }
+
+  redirectMail() async {
+    await launch(
+        'mailto:${checklistModel.employeeImport.text}?subject=Subject mail&body=Body mail');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,160 +122,184 @@ class _ChecklistDetailState extends State<ChecklistDetail> {
 
     if (data['view'] != 'create' && !flagUpdate) {
       checklistModel.name.text = data['name'];
-      checklistModel.content.text = data['content'];
-      checklistModel.hour = data['hour'];
-      checklistModel.minutes = data['minutes'];
-      checklistModel.current = data['current'];
+      checklistModel.price.text = data['price'];
+      checklistModel.quantity.text = data['quantity'];
+      checklistModel.description.text = data['description'];
+      checklistModel.location.text = data['location'];
+      checklistModel.employeeImport.text = data['employeeImport'];
+
+      checklistValidation.name = data['name'];
+      checklistValidation.price = data['price'];
+      checklistValidation.quantity = data['quantity'];
+      checklistValidation.description = data['description'];
+      checklistValidation.location = data['location'];
+      checklistValidation.employeeImport = data['employeeImport'];
+
+      setState(() {
+        flagUpdate = true;
+      });
     }
 
     return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            color: Color.fromRGBO(48, 135, 189, 1),
-            padding: EdgeInsets.all(20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    child:
-                        Icon(Icons.arrow_back, color: Colors.white, size: 30),
-                    onTap: () => Navigator.pop(context, true),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            Container(
+              color: Color.fromRGBO(48, 135, 189, 1),
+              padding: EdgeInsets.all(20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      child:
+                          Icon(Icons.arrow_back, color: Colors.white, size: 30),
+                      onTap: () => Navigator.pop(context, true),
+                    ),
                   ),
-                ),
-                Text(
-                  data['view'] == 'create'
-                      ? 'Tạo công việc'
-                      : 'Chỉnh sửa công việc',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                Container(
-                  width: 1,
-                  height: 1,
-                  color: Color.fromRGBO(48, 135, 189, 1),
-                )
-              ],
-            ),
-          ),
-          SizedBox(height: 30),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: TextField(
-              controller: checklistModel.name,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Tên công việc',
+                  Text(
+                    data['view'] == 'create'
+                        ? 'Tạo công việc'
+                        : 'Chỉnh sửa công việc',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  Container(
+                    width: 1,
+                    height: 1,
+                    color: Color.fromRGBO(48, 135, 189, 1),
+                  )
+                ],
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: TextField(
-              controller: checklistModel.content,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Chi tiết công việc',
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: TextField(
+                controller: checklistModel.name,
+                decoration: InputDecoration(
+                    labelText: 'Tên Mô Tô',
+                    errorText: checklistValidation.name == '' && submitted
+                        ? 'Vui lòng nhập tên Mô Tô'
+                        : null),
+                onChanged: (text) => setState(() {
+                  checklistValidation.name = text;
+                }),
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                Text('Giờ: ', style: TextStyle(fontSize: 20)),
-                DropdownButton<String>(
-                  value: checklistModel.hour,
-                  elevation: 16,
-                  style:
-                      const TextStyle(color: Colors.deepPurple, fontSize: 20),
-                  underline: Container(
-                    height: 2,
-                    color: Colors.deepPurpleAccent,
-                  ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      checklistModel.hour = newValue!;
-                      flagUpdate = true;
-                    });
-                  },
-                  items: dataHour.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(width: 30),
-                Text('Phút: ', style: TextStyle(fontSize: 20)),
-                DropdownButton<String>(
-                  value: checklistModel.minutes,
-                  elevation: 16,
-                  style:
-                      const TextStyle(color: Colors.deepPurple, fontSize: 20),
-                  underline: Container(
-                    height: 2,
-                    color: Colors.deepPurpleAccent,
-                  ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      checklistModel.minutes = newValue!;
-                      flagUpdate = true;
-                    });
-                  },
-                  items:
-                      dataMinutes.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(width: 30),
-                Text('Buổi: ', style: TextStyle(fontSize: 20)),
-                DropdownButton<String>(
-                  value: checklistModel.current,
-                  elevation: 16,
-                  style:
-                      const TextStyle(color: Colors.deepPurple, fontSize: 20),
-                  underline: Container(
-                    height: 2,
-                    color: Colors.deepPurpleAccent,
-                  ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      checklistModel.current = newValue!;
-                      flagUpdate = true;
-                    });
-                  },
-                  items:
-                      dataCurrent.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ],
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: TextField(
+                controller: checklistModel.price,
+                decoration: InputDecoration(
+                    labelText: 'Giá Moto',
+                    errorText: checklistValidation.price == '' && submitted
+                        ? 'Vui lòng nhập giá Mô Tô'
+                        : !RegExp(r'[0-9]').hasMatch(
+                                    checklistValidation.price.toString()) &&
+                                submitted
+                            ? 'Định dạng sai thông tin'
+                            : null),
+                onChanged: (text) => setState(() {
+                  checklistValidation.price = text;
+                }),
+              ),
             ),
-          ),
-          SizedBox(height: 20),
-          ButtonIcon(
-              20,
-              20,
-              data['view'] == 'create' ? 'Thêm' : 'Chỉnh sửa',
-              data['view'] == 'create' ? 'create' : data['view'],
-              data['view'] == 'create'
-                  ? (id) => handleCreateChecklist()
-                  : (id) => handleUpdateChecklist(id),
-              data['view'] == 'create' ? Icons.create : Icons.update,
-              true),
-          SizedBox(height: 20),
-          Text(messSuccess,
-              style: TextStyle(
-                  color: Color.fromRGBO(48, 135, 189, 1), fontSize: 20))
-        ],
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: TextField(
+                controller: checklistModel.quantity,
+                decoration: InputDecoration(
+                    labelText: 'Số lượng',
+                    errorText: checklistValidation.quantity == '' && submitted
+                        ? 'Vui lòng nhập số lượng Mô Tô'
+                        : !RegExp(r'[0-9]').hasMatch(
+                                    checklistValidation.quantity.toString()) &&
+                                submitted
+                            ? 'Định dạng sai thông tin'
+                            : null),
+                onChanged: (text) => setState(() {
+                  checklistValidation.quantity = text;
+                }),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: TextField(
+                controller: checklistModel.description,
+                decoration: InputDecoration(
+                    labelText: 'Mô tả',
+                    errorText:
+                        checklistValidation.description == '' && submitted
+                            ? 'Vui lòng nhập mô tả Mô Tô'
+                            : null),
+                onChanged: (text) => setState(() {
+                  checklistValidation.description = text;
+                }),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: TextField(
+                controller: checklistModel.location,
+                decoration: InputDecoration(
+                    labelText: 'Địa chỉ',
+                    errorText: checklistValidation.location == '' && submitted
+                        ? 'Vui lòng nhập địa chỉ Mô Tô'
+                        : null),
+                onChanged: (text) => setState(() {
+                  checklistValidation.location = text;
+                }),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: TextField(
+                controller: checklistModel.employeeImport,
+                decoration: InputDecoration(
+                    labelText: 'Email nhân viên',
+                    errorText: checklistValidation.employeeImport == '' &&
+                            submitted
+                        ? 'Vui lòng nhập Email nhân viên'
+                        : !RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                                    .hasMatch(checklistValidation.employeeImport
+                                        .toString()) &&
+                                submitted
+                            ? 'Định dạng sai thông tin'
+                            : null),
+                onChanged: (text) => setState(() {
+                  checklistValidation.employeeImport = text;
+                }),
+              ),
+            ),
+            SizedBox(height: 20),
+            if (data['view'] != 'create') ...[
+              ButtonIcon(20, 20, 'Vị Trí', 'vitri', (id) => redirectLocation(),
+                  Icons.place, true, true),
+              SizedBox(height: 20),
+            ],
+            if (data['view'] != 'create') ...[
+              ButtonIcon(20, 20, 'Gmail', 'gmail', (id) => redirectMail(),
+                  Icons.email, true, true),
+              SizedBox(height: 20),
+            ],
+            ButtonIcon(
+                20,
+                20,
+                data['view'] == 'create' ? 'Thêm' : 'Chỉnh sửa',
+                data['view'] == 'create' ? 'create' : data['view'],
+                data['view'] == 'create'
+                    ? (id) => handleCreateChecklist()
+                    : (id) => handleUpdateChecklist(id),
+                data['view'] == 'create' ? Icons.create : Icons.update,
+                true,
+                true),
+            SizedBox(height: 20),
+            Text(messSuccess,
+                style: TextStyle(
+                    color: Color.fromRGBO(48, 135, 189, 1), fontSize: 20))
+          ],
+        ),
       ),
     );
   }
